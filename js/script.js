@@ -44,7 +44,7 @@ const titleClickHandler = function (event){
 
   /* add class 'active' to the correct article */
   targetArticle.classList.add('active');
-}
+};
 
 
 const optArticleSelector = '.post',
@@ -59,7 +59,7 @@ function generateTitleLinks(){
   titleList.innerHTML = '';
 
   /*for each article */
-  const articles = document.querySelectorAll(optArticleSelector + customSelector);
+  const articles = document.querySelectorAll(optArticleSelector + 'customSelector');
   console.log(articles);
 
   let html = '';
@@ -76,7 +76,7 @@ function generateTitleLinks(){
 
     /* create HTML of the link */
     const linkHTML = '<li><a href="#' + articleId + '"<span>' + articleTitle + '</span></a></li>';
-    console.log(linkHTML)
+    console.log(linkHTML);
 
     /* insert link into titleList */
     // titleList.innerHTML = titleList.innerHTML + linkHTML;
