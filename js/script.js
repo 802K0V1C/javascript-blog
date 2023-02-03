@@ -51,7 +51,9 @@ const optArticleSelector = '.post',
   optTitleSelector = '.post-title',
   optTitleListSelector = '.titles',
   optArticleTagsSelector = '.post-tags .list',
-  optTagsListSelector = '.tags.list';
+  optTagsListSelector = '.tags.list',
+  optCloudClassCount = '5',
+  optCloudClassPrefix = 'tag-size-';
 
 function generateTitleLinks(customSelector = ''){
 
@@ -96,6 +98,27 @@ function generateTitleLinks(customSelector = ''){
 }
 
 generateTitleLinks();
+
+function calculateTagsParams(tags){
+
+  const params = {
+    max: 0,
+    min: 999999
+  };
+
+  for(let tag in tags){
+    if(tags[tag] > params.max){
+      params.max = tags[tag];
+    }
+    if(tags[tag] < params.min){
+      params.min = tags[tag];
+    }
+  }
+  return params;
+}
+
+calculateTagsParams();
+
 
 function generateTags(){
   /* [NEW] create a new variable allTags with an empty object */
@@ -146,13 +169,17 @@ function generateTags(){
       /* [NEW] find list of tags in right column */
       const tagList = document.querySelector(optTagsListSelector);
 
+      const tagsParams = calculateTagsParams(allTags);
+      console.log('tagsParams:', tagsParams);
+
       /* [NEW] create variable for all links HTML code */
       let allTagsHTML = '';
 
       /* [NEW] START LOOP: for each tag in allTags: */
       for(let tag in allTags){
       /* [NEW] generate code of a link and add it to allTagsHTML */
-        allTagsHTML += '<li><a href="#tag-' + tag +'">' + tag +' (' + allTags[tag] + ') </a></li>';
+        allTagsHTML += '<li><a href="#tag-' + tag +'" class="' + optCloudClassPrefix + calculateTagClass(allTags[tag], tagsParams) + '">' + tag +' (' + allTags[tag] + ') </a></li>';
+        console.log(allTagsHTML);
       }
       /* [NEW] END LOOP: for each tag in allTags: */
 
@@ -163,7 +190,38 @@ function generateTags(){
   }
 }
 
+function calculateTagClass(count, params){
+
+  const normalizedCount = count - params.min;
+
+  const normalizedMax = params.max - params.min;
+
+  const percentage = normalizedCount / normalizedMax;
+
+  const classNumber = Math.floor( percentage * (optCloudClassCount - 1) + 1);
+
+  return classNumber;
+
+}
+
+// classNumber = Math.floor( 0.5 * 5 + 1 );
+
+// classNumber = Math.floor( 0.5 * optCloudClassCount + 1 );
+
+// classNumber = Math.floor( ( 4 / 8 ) * optCloudClassCount + 1 );
+
+// classNumber = Math.floor( ( (6 - 2) / (10 - 2) ) * optCloudClassCount + 1 );
+
+// classNumber = Math.floor( ( (count - 2) / (10 - 2) ) * optCloudClassCount + 1 );
+
+// classNumber = Math.floor( ( (count - 2) / (params.max - 2) ) * optCloudClassCount + 1 );
+
+// classNumber = Math.floor( ( (count - params.min) / (params.max - 2) ) * optCloudClassCount + 1 );
+
+// classNumber = Math.floor( ( (count - params.min) / (params.max - params.min) ) * optCloudClassCount + 1 );
+
 generateTags();
+
 
 function tagClickHandler(event){
   /* prevent default action for this event */
@@ -222,4 +280,3 @@ function addClickListenersToTags(){
 }
 
 addClickListenersToTags();
-
