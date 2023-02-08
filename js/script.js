@@ -1,10 +1,20 @@
 'use strict';
+
+const templates = {
+  articleLink: Handlebars.compile(document.querySelector('#template-article-link').innerHTML),
+
+  articleTag: Handlebars.compile(document.querySelector('#template-article-tag').innerHTML),
+
+  tagCloudLink: Handlebars.compile(document.querySelector('#template-tag-cloud-link').innerHTML),
+}
+
 /*
 document.getElementById('test-button').addEventListener('click', function(){
     const links = document.querySelectorAll('.titles a');
     console.log('links:', links);
   });
 */
+
 const titleClickHandler = function (event){
   event.preventDefault();
 
@@ -79,7 +89,8 @@ function generateTitleLinks(customSelector = ''){
     /* get the title from the title element */
 
     /* create HTML of the link */
-    const linkHTML = '<li><a href="#' + articleId + '"<span>' + articleTitle + '</span></a></li>';
+    const linkHTMLData = {id: articleId, title: articleTitle};
+    const linkHTML = templates.articleLink(linkHTMLData);
     // console.log(linkHTML);
 
     /* insert link into titleList */
@@ -147,7 +158,8 @@ function generateTags(){
     for(let tag of articleTagsArray){
 
       /* generate HTML of the link */
-      const linkHTML = '<li><a href="#tag-' + tag + '">' + tag + '</a></li>';
+      const linkHTMLData = {id: tag, title: tag};
+      const linkHTML = templates.articleTag(linkHTMLData);
 
       /* add generated code to html variable */
       html = html + linkHTML + ' ';
@@ -173,18 +185,21 @@ function generateTags(){
       console.log('tagsParams:', tagsParams);
 
       /* [NEW] create variable for all links HTML code */
-      let allTagsHTML = '';
+      const allTagsData = {tags: []};
 
       /* [NEW] START LOOP: for each tag in allTags: */
       for(let tag in allTags){
       /* [NEW] generate code of a link and add it to allTagsHTML */
-        allTagsHTML += '<li><a href="#tag-' + tag +'" class="' + optCloudClassPrefix + calculateTagClass(allTags[tag], tagsParams) + '">' + tag +' (' + allTags[tag] + ') </a></li>';
-        console.log(allTagsHTML);
+        allTagsData.tags.push({
+          tag: tag,
+          count: allTags[tag],
+          className: calculateTagClass(allTags[tag], tagsParams)
+        });
       }
       /* [NEW] END LOOP: for each tag in allTags: */
 
       /*[NEW] add HTML from allTagsHTML to tagList */
-      tagList.innerHTML = allTagsHTML;
+      tagList.innerHTML = templates.tagCloudLink(allTagsData);
 
     }
   }
